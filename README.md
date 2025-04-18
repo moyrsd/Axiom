@@ -33,9 +33,7 @@ The General-Purpose Document Q&A System is an AI-powered tool designed to extrac
     uvicorn main:app --reload
     ```
 
-15. [Postman GitHub API](https://www.postman.com/) - A tool for testing GitHub API endpoints.
 
-Feel free to explore these resources to kickstart or deepen your understanding of GitHub integrations!
 
 
 
