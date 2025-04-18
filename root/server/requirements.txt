@@ -5,3 +5,7 @@ langchain
 PyPDF2
 faiss-cpu
 langchain_google_genai
+fastapi
+uvicorn
+langchain-community
+python-multipart
