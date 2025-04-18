@@ -20,18 +20,21 @@ The General-Purpose Document Q&A System is an AI-powered tool designed to extrac
     ```
 2. Setup Frontend
     ```sh
-    cd client
+    cd root/client
     npm install
     npm run dev
     ```
 3. Setup Backend
 
     ```sh
-    cd server
-    pip install requirements.txt
-    # Add Google Api key in .env file
+    cd root/server
+    pip install -r requirements.txt
+    # Add Google Api key in .env file (See .env.example for reference)
     uvicorn main:app --reload
     ```
+4. Use the application
+   now go to `http://localhost:3000/` to use the application. Upload any pdf file and ask question 
+    
 
 
 
