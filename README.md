@@ -28,6 +28,8 @@ The General-Purpose Document Q&A System is an AI-powered tool designed to extrac
 
     ```sh
     cd root/server
+    python3 -m venv venv
+    source venv/bin/activate
     pip install -r requirements.txt
     # Add Google Api key in .env file (See .env.example for reference)
     uvicorn main:app --reload
