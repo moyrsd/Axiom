@@ -9,3 +9,10 @@ fastapi
 uvicorn
 langchain-community
 python-multipart
+python-docx
+python-pptx
+pandas
+openpyxl
+pdf2image
+pytesseract
+pillow
