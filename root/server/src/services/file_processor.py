@@ -1,57 +1,44 @@
 import os
-from PyPDF2 import PdfReader
-from docx import Document
-from pptx import Presentation
-from pandas import read_csv, read_excel, read_json
-import pytesseract
-from pdf2image import convert_from_path
-from PIL import Image
 from typing import List
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ..services import vector_store
-
-
+from ..document_processing import (
+    pdf_parser,
+    docx_parser,
+    pptx_parser,
+    excel_parser,
+    csv_parser,
+    json_parser,
+    image_parser,
+    text_parser,
+)
 
 def process_file(file_path: str) -> str:
     text = ""
     ext = os.path.splitext(file_path)[-1].lower()
     
     if ext == ".pdf":
-        text += process_pdf(file_path)
+        text += pdf_parser.process_pdf(file_path)
     elif ext == ".docx":
-        doc = Document(file_path)
-        text += "\n".join([para.text for para in doc.paragraphs])
+        text += docx_parser.process_docx(file_path)
     elif ext == ".pptx":
-        prs = Presentation(file_path)
-        text += "\n".join([shape.text for slide in prs.slides for shape in slide.shapes if hasattr(shape, "text")])
+        text += pptx_parser.process_pptx(file_path)
     elif ext in (".xlsx", ".xls"):
-        df = read_excel(file_path)
-        text += df.to_string()
+        text += excel_parser.process_excel(file_path)
     elif ext == ".csv":
-        df = read_csv(file_path)
-        text += df.to_string()
+        text += csv_parser.process_csv(file_path)
     elif ext == ".json":
-        with open(file_path) as f:
-            data = read_json(f)
-            text += str(data)
+        text += json_parser.process_json(file_path)
     elif ext in (".png", ".jpg", ".jpeg"):
-        text += pytesseract.image_to_string(Image.open(file_path))
+        text += image_parser.process_image(file_path)
     elif ext == ".txt":
-        with open(file_path) as f:
-            text += f.read()
+        text += text_parser.process_text(file_path)
+    else:
+        raise ValueError(f"Unsupported file type: {ext}")    
     
     return text
 
-def process_pdf(file_path: str) -> str:
-    text = ""
-    try:  # First try text extraction
-        with open(file_path, "rb") as file:
-            pdf_reader = PdfReader(file)
-            text += "".join([page.extract_text() or "" for page in pdf_reader.pages])
-    except:  # Fallback to OCR
-        images = convert_from_path(file_path)
-        text += "".join([pytesseract.image_to_string(img) for img in images])
-    return text
+
 
 def get_text_chunks(text: str) -> List[str]:
     """Split text into manageable chunks"""
@@ -61,9 +48,6 @@ def get_text_chunks(text: str) -> List[str]:
         separators=["\n\n", "\n", ". ", " ", ""]
     )
     return text_splitter.split_text(text)
-
-
-
 
 
 def process_files(temp_paths: List[str]):
