@@ -15,9 +15,8 @@ class PdfProcessing:
 
     def process_pdf(self):
         for page_num, page in enumerate(self.doc):
-             text = page.get_text()
              self.extracted_content.append({
-                    "page_content": text, 
+                    "page_content": page.get_text(), 
                     "meta_data": {
                         "source": self.name,
                         "page_num": page_num + 1,

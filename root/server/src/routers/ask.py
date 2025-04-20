@@ -8,9 +8,16 @@ async def ask_question(question: str = Query(..., min_length=1)):
     """Handle questions via query parameter in POST"""
     if not constant.global_state.vector_store:
         raise HTTPException(400, "No documents processed yet")
-    
-    docs = constant.global_state.vector_store.similarity_search(question)
+    retriever = constant.global_state.vector_store.as_retriever(search_kwargs={"k": 5})
+    docs = retriever.get_relevant_documents(question)
     chain = qa_chain.get_conversational_chain()
     response = chain({"input_documents": docs, "question": question})
+    sources = [
+        f"Page {doc.metadata['page_num']} of {doc.metadata['source'][5:]}"
+        for doc in docs
+    ]
     
-    return {"answer": f"**Answer:**\n{response['output_text']}"}
+    return {
+        "answer": response["output_text"],
+        "sources": list(set(sources))
+    }

@@ -1,5 +1,6 @@
 import os
 from typing import List
+from langchain_core.documents import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ..services import vector_store
 from ..document_processing import (
@@ -12,14 +13,11 @@ from ..document_processing import (
 )
 
 def process_file(file_path: str) -> str:
-    text = ""
     ext = os.path.splitext(file_path)[-1].lower()
-    
+    text = ""
     if ext in [".pdf",".docx",".pptx"]: # pymupdf can extract pdf, docx, pptx
         processor = pdf_parser.PdfProcessing(file_path) 
-        extracted_content = processor.process_pdf() 
-        for content in extracted_content:
-            text += content["page_content"] + "\n" 
+        return processor.process_pdf()
     elif ext in (".xlsx", ".xls"):
         text += excel_parser.process_excel(file_path)
     elif ext == ".csv":
@@ -33,35 +31,41 @@ def process_file(file_path: str) -> str:
     else:
         raise ValueError(f"Unsupported file type: {ext}")    
     
-    return text
+
+
+def get_langchain_document(extracted_content):
+    documents = [Document(
+            page_content=item["page_content"],
+            metadata=item["meta_data"]  
+            ) for item in extracted_content]
+    return documents
 
 
 
-def get_text_chunks(text: str) -> List[str]:
+def get_docs_chunks(documents):
     """Split text into manageable chunks"""
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200,
         separators=["\n\n", "\n", ". ", " ", ""]
     )
-    return text_splitter.split_text(text)
+    return text_splitter.split_documents(documents)
 
 
 def process_files(temp_paths: List[str]):
     try:
-        raw_text = ""
+        all_docs = []
         for path in temp_paths:
-            raw_text += process_file(path) + "\n\n"
-        
-        text_chunks = get_text_chunks(raw_text)
-        vector_store.create_vector_store(text_chunks)
-        
-        # Cleanup
+            all_docs.extend(process_file(path))    
+        lang_docs = get_langchain_document(all_docs)    
+        chunked_docs = get_docs_chunks(lang_docs)
+        vector_store.create_vector_store(chunked_docs)
         for path in temp_paths:
             os.remove(path)
             
     except Exception as e:
         print(f"Processing error: {str(e)}")
+
 
 
 
