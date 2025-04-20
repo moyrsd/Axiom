@@ -4,8 +4,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ..services import vector_store
 from ..document_processing import (
     pdf_parser,
-    docx_parser,
-    pptx_parser,
     excel_parser,
     csv_parser,
     json_parser,
@@ -17,15 +15,11 @@ def process_file(file_path: str) -> str:
     text = ""
     ext = os.path.splitext(file_path)[-1].lower()
     
-    if ext == ".pdf":
+    if ext in [".pdf",".docx",".pptx"]: # pymupdf can extract pdf, docx, pptx
         processor = pdf_parser.PdfProcessing(file_path) 
         extracted_content = processor.process_pdf() 
         for content in extracted_content:
             text += content["page_content"] + "\n" 
-    elif ext == ".docx":
-        text += docx_parser.process_docx(file_path)
-    elif ext == ".pptx":
-        text += pptx_parser.process_pptx(file_path)
     elif ext in (".xlsx", ".xls"):
         text += excel_parser.process_excel(file_path)
     elif ext == ".csv":

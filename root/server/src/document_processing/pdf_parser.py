@@ -25,7 +25,6 @@ class PdfProcessing:
                         "has_images": self.has_images(page),
                         "has_tables": self.has_tables(page)
                     }})
-        # print(self.extracted_content)
         return self.extracted_content     
             
 
