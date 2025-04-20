@@ -18,7 +18,10 @@ def process_file(file_path: str) -> str:
     ext = os.path.splitext(file_path)[-1].lower()
     
     if ext == ".pdf":
-        text += pdf_parser.process_pdf(file_path)
+        processor = pdf_parser.PdfProcessing(file_path) 
+        extracted_content = processor.process_pdf() 
+        for content in extracted_content:
+            text += content["page_content"] + "\n" 
     elif ext == ".docx":
         text += docx_parser.process_docx(file_path)
     elif ext == ".pptx":
