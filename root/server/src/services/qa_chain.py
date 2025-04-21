@@ -1,4 +1,3 @@
-import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 import google.generativeai as genai
 from langchain.prompts import PromptTemplate

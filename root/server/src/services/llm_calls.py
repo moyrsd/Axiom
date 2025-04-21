@@ -1,6 +1,5 @@
 from google import genai
 from ..config import constant
-from PIL import Image
 
 
 # A class to handle interactions with the Gemini LLM using the genai library

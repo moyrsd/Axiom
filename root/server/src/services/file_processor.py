@@ -13,7 +13,7 @@ from ..document_processing import (
 def process_file(file_path: str) -> str:
     ext = os.path.splitext(file_path)[-1].lower()
     if ext in [".pdf",".docx",".pptx"]: # pymupdf can extract pdf, docx, pptx
-        processor = pdf_parser.PdfProcessing(file_path) 
+        processor =pdf_parser.PdfProcessor(file_path)
         return processor.process_pdf()
     elif ext in (".xlsx", ".xls",".csv",".json"):
         return structured_data_parser.process_structured_data(file_path,ext)
@@ -24,15 +24,12 @@ def process_file(file_path: str) -> str:
     else:
         raise ValueError(f"Unsupported file type: {ext}")    
     
-
-
 def get_langchain_document(extracted_content):
     documents = [Document(
             page_content=item["page_content"],
             metadata=item["meta_data"]  
             ) for item in extracted_content]
     return documents
-
 
 
 def get_docs_chunks(documents):
@@ -55,6 +52,7 @@ def process_files(temp_paths: List[str]):
         vector_store.create_vector_store(chunked_docs)
         for path in temp_paths:
             os.remove(path)
+            
             
     except Exception as e:
         print(f"Processing error: {str(e)}")

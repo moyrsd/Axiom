@@ -15,6 +15,7 @@ def process_structured_data(file_path: str, ext) -> list:
     extracted_content = []
     with open(file_path, 'rb' if ext in ('.xlsx', '.xls') else 'r') as f:
         data = reader(f)
+        # print(data)
         extracted_content.append({
             "page_content": data.to_html(index=False), # better for rag application
             "meta_data": {
