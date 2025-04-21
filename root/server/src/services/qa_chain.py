@@ -3,10 +3,9 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import google.generativeai as genai
 from langchain.prompts import PromptTemplate
 from langchain.chains.question_answering import load_qa_chain
-from dotenv import load_dotenv
+from ..config import constant
 
-load_dotenv()
-genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+genai.configure(api_key=constant.global_state.google_api_key)
 def get_conversational_chain():
     
     prompt_template = """

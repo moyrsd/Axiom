@@ -20,7 +20,7 @@ class PdfProcessing:
              self.extracted_content.append({
                     "page_content": page.get_text(), 
                     "meta_data": {
-                        "source": self.name + "__page_no_" + str(page_num)
+                        "source": self.name[5:] + "__page_no_" + str(page_num)
                     }})
         return self.extracted_content     
             

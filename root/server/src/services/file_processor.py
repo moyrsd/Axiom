@@ -5,29 +5,22 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ..services import vector_store
 from ..document_processing import (
     pdf_parser,
-    excel_parser,
-    csv_parser,
-    json_parser,
     image_parser,
+    structured_data_parser,
     text_parser,
 )
 
 def process_file(file_path: str) -> str:
     ext = os.path.splitext(file_path)[-1].lower()
-    text = ""
     if ext in [".pdf",".docx",".pptx"]: # pymupdf can extract pdf, docx, pptx
         processor = pdf_parser.PdfProcessing(file_path) 
         return processor.process_pdf()
-    elif ext in (".xlsx", ".xls"):
-        text += excel_parser.process_excel(file_path)
-    elif ext == ".csv":
-        text += csv_parser.process_csv(file_path)
-    elif ext == ".json":
-        text += json_parser.process_json(file_path)
+    elif ext in (".xlsx", ".xls",".csv",".json"):
+        return structured_data_parser.process_structured_data(file_path,ext)
     elif ext in (".png", ".jpg", ".jpeg"):
-        text += image_parser.process_image(file_path)
+        return image_parser.process_image(file_path)
     elif ext == ".txt":
-        text += text_parser.process_text(file_path)
+        return text_parser.process_text(file_path)
     else:
         raise ValueError(f"Unsupported file type: {ext}")    
     

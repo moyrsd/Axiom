@@ -13,7 +13,7 @@ async def ask_question(question: str = Query(..., min_length=1)):
     chain = qa_chain.get_conversational_chain()
     response = chain({"input_documents": docs, "question": question})
     sources = [
-        f"{doc.metadata['source'][5:]}"
+        f"{doc.metadata['source']}"
         for doc in docs
     ]
     
