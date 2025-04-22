@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.routers import upload,ask
+from src.routers import upload,ask,delete_tempfiles
 
 app = FastAPI()
 
@@ -15,3 +15,4 @@ app.add_middleware(
 # routers
 app.include_router(upload.router)
 app.include_router(ask.router)
+app.include_router(delete_tempfiles.router)

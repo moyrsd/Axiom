@@ -12,7 +12,7 @@ from ..document_processing import (
 
 def process_file(file_path: str) -> str:
     ext = os.path.splitext(file_path)[-1].lower()
-    if ext in [".pdf",".docx",".pptx"]: # pymupdf can extract pdf, docx, pptx
+    if ext in [".pdf",".docx",".pptx",".ppt"]: # pymupdf can extract pdf, docx, pptx
         processor =pdf_parser.PdfProcessor(file_path)
         return processor.process_pdf()
     elif ext in (".xlsx", ".xls",".csv",".json"):
@@ -50,10 +50,7 @@ def process_files(temp_paths: List[str]):
         lang_docs = get_langchain_document(all_docs)    
         chunked_docs = get_docs_chunks(lang_docs)
         vector_store.create_vector_store(chunked_docs)
-        for path in temp_paths:
-            os.remove(path)
-            
-            
+        
     except Exception as e:
         print(f"Processing error: {str(e)}")
 

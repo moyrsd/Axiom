@@ -8,7 +8,7 @@ class GlobalState:
         self.accepted_extensions = {
             ".pdf", ".docx", ".pptx", ".xlsx",
             ".png", ".jpg", ".jpeg", ".csv",
-            ".json", ".txt"
+            ".json", ".txt" ,".ppt"
         }
         self.google_api_key = os.getenv('GOOGLE_API_KEY')
 

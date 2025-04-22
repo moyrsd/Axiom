@@ -16,24 +16,16 @@ class PdfProcessor:
     
     def __init__(self, file_path: str):
         self.file_path = Path(file_path)
-        self._validate_file()
         self.doc: pymupdf.Document = None
         self._open_pdf()
-
-    def _validate_file(self) -> None:
-        """Ensure valid PDF file exists."""
-        if not self.file_path.exists():
-            raise FileNotFoundError(f"File not found: {self.file_path}")
-        if self.file_path.suffix.lower() != ".pdf":
-            raise ValueError("Invalid file format. Only PDFs are supported.")
 
     def _open_pdf(self) -> None:
         """Safely open PDF file using context manager."""
         try:
             self.doc = pymupdf.open(self.file_path)
         except Exception as e:
-            logger.error(f"Failed to open PDF: {self.file_path}")
-            raise RuntimeError(f"PDF open failed: {str(e)}") from e
+            logger.error(f"Failed to open DOC: {self.file_path}")
+            raise RuntimeError(f"DOC open failed: {str(e)}") from e
 
     def process_pdf(self) -> List[Dict]:
         """Process all pages with text extraction and OCR fallback."""
@@ -52,11 +44,10 @@ class PdfProcessor:
 
     def _process_page(self, page: pymupdf.Page, page_num: int) -> Dict:
         """Process individual page with multiple extraction strategies."""
-        # if self._needs_ocr(text):
-        #     logger.info(f"Using OCR for page {page_num}")
-        #     text = self._extract_text_via_ocr(page_num)
-        # else:
-        text = self._extract_text(page)    
+        text = self._extract_text(page)
+        if self._needs_ocr(text):
+            logger.info(f"Using OCR for page {page_num+1}")
+            text = self._extract_text_via_ocr(page_num)    
         # print(text)
         return {
             "page_content": text,
@@ -69,7 +60,7 @@ class PdfProcessor:
 
     def _needs_ocr(self, text: str) -> bool:
         """Determine if OCR is needed based on extracted text quality."""
-        return len(text.strip().split()) <= 10
+        return len(text.strip().split()) <= 100
 
     def _extract_text_via_ocr(self, page_num: int) -> str:
         """Perform OCR on page image using LLM."""

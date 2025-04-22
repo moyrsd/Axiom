@@ -5,6 +5,7 @@ from ..config import constant
 from ..services import qa_chain
 from ..services import llm_calls
 from ..prompts import ocr_prompt
+from ..prompts import beautify_prompt
 
 router = APIRouter()
 
@@ -33,6 +34,7 @@ def _process_pdf_page(file_path: str, page_num: str):
         )
         prompt = ocr_prompt.prompt_ocr
         ocr_client = llm_calls.LlmCalls()
+        print("it is working")
         return ocr_client.llm_ocr(img,prompt),
     except Exception as e:
         raise HTTPException(500, f"PDF processing failed: {str(e)}")
@@ -51,7 +53,6 @@ async def ask_question(question: str = Query(..., min_length=1)):
     
     # # Process PDF pages with OCR
     # pdf_docs = [d for d in docs if any(ext in d.metadata['source'] for ext in [".pdf", ".docx", ".pptx"])]
-    # print(pdf_docs)
     # grouped_files = _group_sources(pdf_docs)
     # for filename, pages in grouped_files.items():
     #     for page_num in pages:
@@ -68,13 +69,19 @@ async def ask_question(question: str = Query(..., min_length=1)):
     #             raise HTTPException(500, f"Error processing {filename}: {str(e)}")
 
     # Generate answer
+    sources = {f"{doc.metadata['source']}" for doc in docs}
+    uniqe_sources :str= list(set(sources))
+    source_str = "".join(uniqe_sources)
     chain = qa_chain.get_conversational_chain()
     response = chain.invoke({"input_documents": docs, "question": question})
+    llm_client = llm_calls.LlmCalls()
+    prompt = beautify_prompt.beautify_prompt(response["output_text"]+"sources are "+ source_str) 
+    beutiful_response = llm_client.llm_response(prompt)
+    print(beutiful_response)
     
     # Format sources
-    sources = {f"{doc.metadata['source']}" for doc in docs}
+
     
     return {
-        "answer": response["output_text"],
-        "sources": sorted(sources)
+        "answer": beutiful_response 
     }

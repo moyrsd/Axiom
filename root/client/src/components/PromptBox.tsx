@@ -28,7 +28,7 @@ const PromptBox = ({
       const data = await response.json();
 
       onNewMessage({
-        content: data.answer + "**source** " + data.sources || "No answer found in documents",
+        content: data.answer || "No answer found in documents",
         isUser: false,
       });
     } catch (error) {
