@@ -5,6 +5,7 @@ export interface Message {
 
 export interface MessageListProps {
   messages: Message[];
+  isLoading?: boolean;
 }
 
 export interface FileSidebarProps {

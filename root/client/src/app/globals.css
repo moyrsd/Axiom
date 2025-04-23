@@ -1,10 +1,26 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@layer theme, base, components, utilities;
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-primary: #4d6bfe;
+}
+
+@layer utilities {
+  .drop-shadow-glow {
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.7); /* blue glow */
+  }
+
+  @keyframes fadeInSlow {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .animate-fadeInSlow {
+    animation: fadeInSlow 1.5s ease-out forwards;
+  }
 }
 
 html {

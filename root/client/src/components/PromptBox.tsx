@@ -3,15 +3,18 @@ import { Message } from "@/interface/Interface";
 
 const PromptBox = ({
   onNewMessage,
+  onFocus,
+  setIsSubmitting,
 }: {
   onNewMessage: (message: Message) => void;
+  onFocus?: () => void;
+  setIsSubmitting: (status: boolean) => void;
 }) => {
   const [query, setQuery] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim() || isSubmitting) return;
+    if (!query.trim()) return;
 
     setIsSubmitting(true);
     onNewMessage({ content: `**Question:**\n${query}`, isUser: true });
@@ -19,23 +22,19 @@ const PromptBox = ({
     try {
       const response = await fetch(
         `/api/ask?question=${encodeURIComponent(query)}`,
-        {
-          method: "POST",
-        }
+        { method: "POST" }
       );
 
       if (!response.ok) throw new Error("Request failed");
       const data = await response.json();
 
       onNewMessage({
-        content: data.answer || "No answer found in documents",
+        content:
+          data.answer + "\n\n**source**: " + (data.sources || "No source"),
         isUser: false,
       });
     } catch (error) {
-      onNewMessage({
-        content: "Error getting response",
-        isUser: false,
-      });
+      onNewMessage({ content: "Error getting response", isUser: false });
     } finally {
       setIsSubmitting(false);
       setQuery("");
@@ -43,22 +42,26 @@ const PromptBox = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 ">
-      <div className="flex gap-2">
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+      <div className="flex gap-3">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask about your PDF..."
-          className="flex-1 bg-gray-800 text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={isSubmitting}
+          onFocus={onFocus}
+          placeholder="Ask anything about the uploaded docs..."
+          className="flex-1 bg-gray-900 text-white p-3 rounded-xl shadow-lg 
+          ring-1 ring-blue-500/30 focus:outline-none 
+          focus:ring-4 focus:ring-blue-400/30 focus:ring-offset-2 focus:ring-offset-gray-900
+          focus:shadow-[0_0_15px_3px_rgba(159,130,246,0.4)]
+          transition duration-300"
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-          disabled={isSubmitting}
+          className="bg-blue-500 text-white px-5 py-2 rounded-xl shadow-md 
+          hover:bg-blue-500 hover:ring-2 hover:ring-blue-400 transition duration-200"
         >
-          {isSubmitting ? "Sending..." : "Ask"}
+          Ask
         </button>
       </div>
     </form>
