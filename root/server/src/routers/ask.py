@@ -5,8 +5,11 @@ from ..config import constant
 from ..services import qa_chain
 from ..services import llm_calls
 from ..prompts import ocr_prompt
-from ..prompts import beautify_prompt
+from ..prompts import beautify_prompt,dataprocessing_prompt
 from ..document_processing import structured_data_parser
+from langchain_core.messages import AIMessage,HumanMessage
+from ..services import convert_to_json
+
 
 router = APIRouter()
 
@@ -70,19 +73,29 @@ async def ask_question(question: str = Query(..., min_length=1)):
     #             raise HTTPException(500, f"Error processing {filename}: {str(e)}")
 
     # Generate answer
-    # sources = {f"{doc.metadata['source'][5:]}" for doc in docs}
-    # uniqe_sources :str= list(set(sources))
-    # source_str = "".join(uniqe_sources)
-    # chain = qa_chain.get_conversational_chain()
-    # response = chain.invoke({"input_documents": docs, "question": question})
-    # llm_client = llm_calls.LlmCalls()
-    # prompt = beautify_prompt.beautify_prompt(response["output_text"]+"sources are "+ source_str) 
-    # beutiful_response = llm_client.llm_response(prompt)
-    # print(beutiful_response)
-    
-    # # Format sources
+
+    sources = {f"{doc.metadata['source'][5:]}" for doc in docs}
+    uniqe_sources :str= list(set(sources))
+    source_str = "".join(uniqe_sources)
+    chain = qa_chain.get_conversational_chain()
+    response = chain.invoke({"input_documents": docs, "question": question})
+
+
+
+    llm_client = llm_calls.LlmCalls()
+    prompt_data = dataprocessing_prompt.data_processing_prompt(response["output_text"]+"sources are "+ source_str, question=question, file_names=constant.global_state.temp_paths)
+    data_processing = llm_client.llm_response(prompt_data)
+    data_processing_json = convert_to_json.convert(data_processing)
+    if (data_processing_json["data_processing_needed"]=="yes"):
+        response = structured_data_parser.process_structured_data(constant.global_state.temp_paths[0],str(data_processing_json["ext"]),action="data_processing",question=question)   
+    prompt_beautify = beautify_prompt.beautify_prompt(response["output_text"]+"sources are "+ source_str) 
+    beutiful_response = llm_client.llm_response(prompt_beautify)
 
     
     return {
-        "answer": structured_data_parser.process_structured_data(constant.global_state.temp_paths[0],".csv",action="data_processing",question=question)
+        "answer": beutiful_response
     }
+
+
+# https://python.langchain.com/docs/tutorials/chatbot/
+# https://python.langchain.com/docs/tutorials/agents/

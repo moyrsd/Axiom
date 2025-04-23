@@ -1,4 +1,4 @@
-prompt_ocr = """You are a precision-focused OCR system specialized in extracting data from images.
+prompt_ocr = f"""You are a precision-focused OCR system specialized in extracting data from images.
  you have to help pymupdf in completing the scan of a pdf.
  Tasks : 
  - If there is some normal text, give as it is
