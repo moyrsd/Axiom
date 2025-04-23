@@ -9,29 +9,43 @@ const FileSidebar = ({ onUpload }: FileSidebarProps) => {
   );
 
   const handleFileUpload = async (files: File[]) => {
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
+  const formData = new FormData();
+  files.forEach((file) => formData.append('files', file));
 
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+  // Initial upload state for all files
+  files.forEach((file) => {
+    setUploadStatus((prev) => ({ ...prev, [file.name]: '⏳ Uploading...' }));
+  });
 
-      if (!response.ok) throw new Error("Upload failed");
-      const result = await response.json();
-      setUploadStatus((prev) => ({
-        ...prev,
-        [files[0].name]: "✅ Uploaded",
-      }));
-      onUpload(); // Trigger parent callback
-    } catch (error) {
-      setUploadStatus((prev) => ({
-        ...prev,
-        [files[0].name]: "❌ Failed",
-      }));
-    }
-  };
+  // Simulate upload delay
+  await new Promise(resolve => setTimeout(resolve, 2000));
+
+  // Update to processing state
+  files.forEach((file) => {
+    setUploadStatus((prev) => ({ ...prev, [file.name]: '⏳ Processing...' }));
+  });
+
+  try {
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error('Upload failed');
+    
+    // Final success state
+    files.forEach((file) => {
+      setUploadStatus((prev) => ({ ...prev, [file.name]: '✅ Processed' }));
+    });
+    onUpload();
+  } catch (error) {
+    // Error state
+    files.forEach((file) => {
+      setUploadStatus((prev) => ({ ...prev, [file.name]: '❌ Failed' }));
+    });
+  }
+};
+
 
   return (
     <div className="w-64 bg-gray-900 text-white h-screen flex flex-col">

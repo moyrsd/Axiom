@@ -1,6 +1,8 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import { Message, MessageListProps } from "@/interface/Interface";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   return (
@@ -18,7 +20,20 @@ const MessageList: React.FC<MessageListProps> = ({ messages }) => {
             }`}
           >
             <div className="prose prose-invert max-w-full">
-              <ReactMarkdown>{message.content}</ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+                components={{
+                  h1: ({ node, ...props }) => (
+                    <h1 className="text-lg font-bold mb-2" {...props} />
+                  ),
+                  li: ({ node, ...props }) => (
+                    <li className="my-1" {...props} />
+                  )
+                }}
+              >
+                {message.content}
+              </ReactMarkdown>
             </div>
           </div>
         </div>

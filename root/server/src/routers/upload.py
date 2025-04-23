@@ -28,8 +28,8 @@ async def upload_files(
             temp_paths.append(temp_path)
         
         if background_tasks:
-            background_tasks.add_task(file_processor.process_files, temp_paths)
-            return {"status": "Processing started"}
+            file_processor.process_files(temp_paths)
+            return {"status": "Processing complete"}
         
         raise HTTPException(500, "Background tasks not available")
     

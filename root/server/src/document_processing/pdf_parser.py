@@ -45,9 +45,9 @@ class PdfProcessor:
     def _process_page(self, page: pymupdf.Page, page_num: int) -> Dict:
         """Process individual page with multiple extraction strategies."""
         text = self._extract_text(page)
-        if self._needs_ocr(text):
+        if self._needs_ocr(text) or self._has_chart or self._has_images or self._has_tables:
             logger.info(f"Using OCR for page {page_num+1}")
-            text = self._extract_text_via_ocr(page_num)    
+            text = self._extract_text_via_ocr(page_num)      
         # print(text)
         return {
             "page_content": text,
@@ -86,4 +86,22 @@ class PdfProcessor:
             "file_size": os.path.getsize(self.file_path),
             "file_path": str(self.file_path.resolve())
         }
+       
+    def _has_chart(page:pymupdf.Page)->bool:
+            drawings = page.get_svg_image()
+            if not drawings:
+                return False
+            return True
+    
+    def _has_images(page:pymupdf.Page)->bool:
+            images = page.get_images()
+            if not images:
+                return False
+            return True
+    
+    def _has_tables(page: pymupdf.Page)->bool:
+            tables = page.find_tables().tables
+            if not tables:
+                return False
+            return True
 

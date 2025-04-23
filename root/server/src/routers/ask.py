@@ -69,7 +69,7 @@ async def ask_question(question: str = Query(..., min_length=1)):
     #             raise HTTPException(500, f"Error processing {filename}: {str(e)}")
 
     # Generate answer
-    sources = {f"{doc.metadata['source']}" for doc in docs}
+    sources = {f"{doc.metadata['source'][5:]}" for doc in docs}
     uniqe_sources :str= list(set(sources))
     source_str = "".join(uniqe_sources)
     chain = qa_chain.get_conversational_chain()
