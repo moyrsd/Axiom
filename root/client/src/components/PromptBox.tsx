@@ -52,7 +52,7 @@ const PromptBox = ({
           placeholder="Ask anything about the uploaded docs..."
           className="flex-1 bg-gray-900 text-white p-3 rounded-xl shadow-lg 
           ring-1 ring-blue-500/30 focus:outline-none 
-          focus:ring-4 focus:ring-blue-400/30 focus:ring-offset-2 focus:ring-offset-gray-900
+          focus:ring-4 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-gray-900
           focus:shadow-[0_0_15px_3px_rgba(159,130,246,0.4)]
           transition duration-300"
         />

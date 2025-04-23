@@ -80,7 +80,7 @@ const FileSidebar = ({
             {files.map((file) => (
               <div
                 key={file.name}
-                className="flex items-center justify-between p-2 border-b rounded-xl border-gray-700 hover:bg-gray-800 rounded"
+                className="flex items-center justify-between p-2 border-b rounded-xl border-gray-700 hover:bg-gray-800"
               >
                 <span
                   className="truncate max-w-xs "

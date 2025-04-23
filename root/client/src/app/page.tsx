@@ -54,7 +54,7 @@ export default function Home() {
 
         {/* Logo above prompt box before asking */}
         {!hasAsked && (
-          <div className="absolute scale-250 left-1/2 transform -translate-x-1/2 top-[30%] z-20 transition-all duration-700 ease-in-out">
+          <div className="absolute scale-250 left-1/2 transform -translate-x-1/2 top-[25%] z-20 transition-all duration-700 ease-in-out opacity-40">
             <img
               src="/logo_icon.png"
               alt="Logo"
