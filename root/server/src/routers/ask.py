@@ -6,6 +6,7 @@ from ..services import qa_chain
 from ..services import llm_calls
 from ..prompts import ocr_prompt
 from ..prompts import beautify_prompt
+from ..document_processing import structured_data_parser
 
 router = APIRouter()
 
@@ -69,19 +70,19 @@ async def ask_question(question: str = Query(..., min_length=1)):
     #             raise HTTPException(500, f"Error processing {filename}: {str(e)}")
 
     # Generate answer
-    sources = {f"{doc.metadata['source'][5:]}" for doc in docs}
-    uniqe_sources :str= list(set(sources))
-    source_str = "".join(uniqe_sources)
-    chain = qa_chain.get_conversational_chain()
-    response = chain.invoke({"input_documents": docs, "question": question})
-    llm_client = llm_calls.LlmCalls()
-    prompt = beautify_prompt.beautify_prompt(response["output_text"]+"sources are "+ source_str) 
-    beutiful_response = llm_client.llm_response(prompt)
-    print(beutiful_response)
+    # sources = {f"{doc.metadata['source'][5:]}" for doc in docs}
+    # uniqe_sources :str= list(set(sources))
+    # source_str = "".join(uniqe_sources)
+    # chain = qa_chain.get_conversational_chain()
+    # response = chain.invoke({"input_documents": docs, "question": question})
+    # llm_client = llm_calls.LlmCalls()
+    # prompt = beautify_prompt.beautify_prompt(response["output_text"]+"sources are "+ source_str) 
+    # beutiful_response = llm_client.llm_response(prompt)
+    # print(beutiful_response)
     
-    # Format sources
+    # # Format sources
 
     
     return {
-        "answer": beutiful_response 
+        "answer": structured_data_parser.process_structured_data(constant.global_state.temp_paths[0],".csv",action="data_processing",question=question)
     }

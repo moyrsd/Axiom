@@ -13,7 +13,7 @@ async def upload_files(
 ):
     """Handle multi-format file upload"""
     try:
-        temp_paths = []
+        temp_paths = constant.global_state.temp_paths
         for file in files:
             # Validate file extension
             ext = os.path.splitext(file.filename)[-1].lower()

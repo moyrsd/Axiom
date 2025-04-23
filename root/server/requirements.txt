@@ -19,3 +19,5 @@ pymupdf
 langchain-chroma>=0.1.2
 google-genai
 pandas
+langchain_experimental
+tabulate

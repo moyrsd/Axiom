@@ -11,5 +11,6 @@ class GlobalState:
             ".json", ".txt" ,".ppt"
         }
         self.google_api_key = os.getenv('GOOGLE_API_KEY')
+        self.temp_paths = []
 
 global_state = GlobalState()
