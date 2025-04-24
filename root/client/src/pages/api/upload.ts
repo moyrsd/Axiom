@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { pipeline } from "node:stream/promises";
 import { Writable } from "node:stream";
-
+require('dotenv').config();
 export const config = {
   api: {
     bodyParser: false, // Disable default body parsing
@@ -29,7 +29,7 @@ export default async function handler(
     const writable = new BufferWritable();
     await pipeline(req, writable);
 
-    const response = await fetch("http://127.0.0.1:8000/upload", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/upload`, {
       method: "POST",
       headers: {
         "Content-Type": req.headers["content-type"] || "multipart/form-data",

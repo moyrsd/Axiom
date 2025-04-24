@@ -22,3 +22,5 @@ pandas
 langchain_experimental
 tabulate
 docxtopdf
+requests 
+beautifulsoup4

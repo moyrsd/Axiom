@@ -5,6 +5,7 @@ import PromptBox from "@/components/PromptBox";
 import MessageList from "@/components/MessageList";
 import { Message } from "@/interface/Interface";
 import { useEffect } from 'react';
+import { delete_files } from "./actions/delete_tempfile";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -18,19 +19,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    
-    fetch('http://localhost:8000/removetempfiles', {
-      method: 'POST',
-      signal: controller.signal
-    })
-      .then(response => {
-        if (!response.ok) throw new Error('Failed to clear temp files');
-        console.log('Temp files cleanup triggered');
-      })
-      .catch(error => console.error('Cleanup error:', error));
-
-    return () => controller.abort();
+    delete_files()
   }, []); // Cleans the server request to remove temp files
 
   return (
