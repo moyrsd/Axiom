@@ -16,12 +16,15 @@ async def ask_question(question: str = Query(..., min_length=1)):
         raise HTTPException(400, "No documents processed yet")
     
     response, source_str = rag_response(question)
+    print(response)
+    # print(response)
     need =_needs_data_processing(response,question,constant.global_state.temp_paths)
+    print(need)
     if (need["data_processing_needed"]=="yes"):
         response= structured_data_parser.process_structured_data(need["filename"],str(need["ext"]),action="data_processing",question=question)
         source_str = str(need["filename"][5:]) 
     return {
-        "answer": beutify(response,source_str)
+        "answer": beutify(response,source_str,question)
     }
 
 
@@ -37,9 +40,10 @@ def rag_response(question):
     response_text = response["output_text"]
     return {response_text,source_str}
 
-def beutify(response,source_str):
+def beutify(response,source_str,question):
     llm_client = llm_calls.LlmCalls()
-    prompt = beautify_prompt.beautify_prompt(response+"sources are "+ source_str) 
+    prompt = beautify_prompt.beautify_prompt(response+"sources are "+ source_str,question)
+    print(prompt) 
     return llm_client.llm_response(prompt)
 
 

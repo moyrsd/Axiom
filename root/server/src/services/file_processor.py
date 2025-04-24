@@ -5,18 +5,27 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ..services import vector_store
 from ..config import constant
 from ..document_processing import web_crawl
+from docxtopdf import convert
 from ..document_processing import (
     pdf_parser,
     image_parser,
     structured_data_parser,
     text_parser,
+    ppt_parser
 )
 
 def process_file(file_path: str) -> str:
     ext = os.path.splitext(file_path)[-1].lower()
-    if ext in [".pdf",".docx",".pptx",".ppt"]: # pymupdf can extract pdf, docx, pptx
+    if ext in [".pdf"]: 
         processor =pdf_parser.PdfProcessor(file_path)
         return processor.process_pdf()
+    if ext in [".docx"]:
+        output_file = file_path.replace(".docx", ".pdf")
+        convert(file_path, output_file)
+        processor =pdf_parser.PdfProcessor(output_file)
+        return processor.process_pdf()
+    if ext in [".pptx",".ppt"]:
+        return ppt_parser.process_pptx(file_path)
     elif ext in (".xlsx", ".xls",".csv",".json"):
         return structured_data_parser.process_structured_data(file_path,ext)
     elif ext in (".png", ".jpg", ".jpeg"):

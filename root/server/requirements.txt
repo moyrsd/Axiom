@@ -21,3 +21,4 @@ google-genai
 pandas
 langchain_experimental
 tabulate
+docxtopdf

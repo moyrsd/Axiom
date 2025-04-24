@@ -48,7 +48,7 @@ class PdfProcessor:
         """Process individual page with multiple extraction strategies."""
         text = self._extract_text(page)
         if self._needs_ocr(text):
-            logger.info(f"Using OCR for page {page_num+1}")
+            logger.info(f"Using OCR for page {page_num}")
             text = self._extract_text_via_ocr(page_num)      
         # print(text)
 
@@ -68,7 +68,7 @@ class PdfProcessor:
 
     def _needs_ocr(self, text: str) -> bool:
         """Determine if OCR is needed based on extracted text quality."""
-        return len(text.strip().split()) <= 100 
+        return len(text.strip().split()) <= 100 or self._has_images or self._has_tables
 
     def _extract_text_via_ocr(self, page_num: int) -> str:
         """Perform OCR on page image using LLM."""
