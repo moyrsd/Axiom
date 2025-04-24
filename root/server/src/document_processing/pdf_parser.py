@@ -6,6 +6,8 @@ import logging
 from typing import List, Dict
 from ..services import llm_calls
 from ..prompts import ocr_prompt
+from ..config import constant
+from urllib.parse import urlparse
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -45,10 +47,16 @@ class PdfProcessor:
     def _process_page(self, page: pymupdf.Page, page_num: int) -> Dict:
         """Process individual page with multiple extraction strategies."""
         text = self._extract_text(page)
-        if self._needs_ocr(text) or self._has_chart or self._has_images or self._has_tables:
+        if self._needs_ocr(text):
             logger.info(f"Using OCR for page {page_num+1}")
             text = self._extract_text_via_ocr(page_num)      
         # print(text)
+
+        
+        # links = []
+        # links.append(self._extract_urls(text))
+        # if links:
+        #     constant.global_state.links = links
         return {
             "page_content": text,
             "meta_data": self._build_metadata(page_num)
@@ -60,7 +68,7 @@ class PdfProcessor:
 
     def _needs_ocr(self, text: str) -> bool:
         """Determine if OCR is needed based on extracted text quality."""
-        return len(text.strip().split()) <= 100
+        return len(text.strip().split()) <= 100 
 
     def _extract_text_via_ocr(self, page_num: int) -> str:
         """Perform OCR on page image using LLM."""
@@ -104,4 +112,13 @@ class PdfProcessor:
             if not tables:
                 return False
             return True
+    
+    def _extract_urls(text):
+        urls = []
+        for word in text.split():
+            parsed = urlparse(word)
+            if parsed.scheme and parsed.netloc:
+                urls.append(word)
+        return urls
+         
 

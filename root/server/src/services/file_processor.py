@@ -3,6 +3,8 @@ from typing import List
 from langchain_core.documents import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from ..services import vector_store
+from ..config import constant
+from ..document_processing import web_crawl
 from ..document_processing import (
     pdf_parser,
     image_parser,
@@ -46,7 +48,9 @@ def process_files(temp_paths: List[str]):
     try:
         all_docs = []
         for path in temp_paths:
-            all_docs.extend(process_file(path))    
+            all_docs.extend(process_file(path))
+        # links = constant.global_state.links
+        # all_docs.extend(web_crawl(links))
         lang_docs = get_langchain_document(all_docs)    
         chunked_docs = get_docs_chunks(lang_docs)
         vector_store.create_vector_store(chunked_docs)

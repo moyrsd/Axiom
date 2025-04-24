@@ -12,5 +12,6 @@ class GlobalState:
         }
         self.google_api_key = os.getenv('GOOGLE_API_KEY')
         self.temp_paths = []
+        self.links = [] 
 
 global_state = GlobalState()

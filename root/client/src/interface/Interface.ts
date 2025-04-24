@@ -11,3 +11,4 @@ export interface MessageListProps {
 export interface FileSidebarProps {
   onUpload: () => void; // Add this prop type definition
 }
+

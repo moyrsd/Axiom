@@ -90,7 +90,7 @@ async def ask_question(question: str = Query(..., min_length=1)):
         response = structured_data_parser.process_structured_data(constant.global_state.temp_paths[0],str(data_processing_json["ext"]),action="data_processing",question=question)   
     prompt_beautify = beautify_prompt.beautify_prompt(response["output_text"]+"sources are "+ source_str) 
     beutiful_response = llm_client.llm_response(prompt_beautify)
-
+    print(beutiful_response)
     
     return {
         "answer": beutiful_response

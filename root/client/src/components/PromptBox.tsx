@@ -30,7 +30,7 @@ const PromptBox = ({
 
       onNewMessage({
         content:
-          data.answer + "\n\n**source**: " + (data.sources || "No source"),
+          data.answer,
         isUser: false,
       });
     } catch (error) {
@@ -42,17 +42,17 @@ const PromptBox = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="w-full max-w-10xl mx-auto">
       <div className="flex gap-3">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={onFocus}
-          placeholder="Ask anything about the uploaded docs..."
+          placeholder="Upload some documents and ask questions"
           className="flex-1 bg-gray-900 text-white p-3 rounded-xl shadow-lg 
-          ring-1 ring-blue-500/30 focus:outline-none 
-          focus:ring-4 focus:ring-blue-400/50 focus:ring-offset-2 focus:ring-offset-gray-900
+          ring-1 ring-blue-500/25 focus:outline-none 
+          focus:ring-4 focus:ring-blue-500/40 focus:ring-offset-2 focus:ring-offset-gray-900
           focus:shadow-[0_0_15px_3px_rgba(159,130,246,0.4)]
           transition duration-300"
         />
