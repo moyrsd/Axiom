@@ -24,3 +24,4 @@ tabulate
 docxtopdf
 requests 
 beautifulsoup4
+chromadb

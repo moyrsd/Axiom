@@ -34,7 +34,7 @@ const PromptBox = ({
         isUser: false,
       });
     } catch (error) {
-      onNewMessage({ content: "Error getting response.please refresh the page and try again ", isUser: false });
+      onNewMessage({ content: "Error getting response.please refresh the page, Upload something  and try again ", isUser: false });
     } finally {
       setIsSubmitting(false);
       setQuery("");
